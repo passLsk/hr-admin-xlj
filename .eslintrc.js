@@ -198,6 +198,9 @@ module.exports = {
     'vue/html-indent': 0,
     'vue/html-closing-bracket-newline': 0,
     'indent': 0,
-    'no-unused-vars': 0
+    'no-unused-vars': 0,
+    'vue/no-parsing-error':0,
+    'object-curly-spacing':0,
+    'vue/max-attributes-per-line':0
   }
 }

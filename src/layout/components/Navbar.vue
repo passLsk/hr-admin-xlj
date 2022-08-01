@@ -1,30 +1,46 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb class="breadcrumb-container" />
-
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <img v-imgerror :src="avatar" class="user-avatar" />
+          <span class="name">{{ name }}</span>
+          <i class="el-icon-caret-bottom" style="color: #fff" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
-            <el-dropdown-item>
-              Home
+          <a>
+            <router-link to="/">
+              <el-dropdown-item> 首页 </el-dropdown-item>
+            </router-link>
+            <a target="_blank" href="https://gitee.com/shuiruohanyu/hrsaas139">
+              <el-dropdown-item>项目地址</el-dropdown-item>
+            </a>
+            <el-dropdown-item divided @click.native="logout">
+              <span style="display: block">退出登录</span>
             </el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
-          </el-dropdown-item>
+          </a></el-dropdown-menu
+        >
+      </el-dropdown>
+    </div>
+    <div
+      style="float: right; height: 100%; line-height: 50px; margin-right: 20px"
+    >
+    <ThemePicker style="vertical-align:bottom;margin-right:8px;line-height:46px"></ThemePicker>
+    <FullScreen></FullScreen>
+      <el-dropdown @command="handleCommand">
+        <span
+          ><svg-icon icon-class="language" style="color: #fff; font-size: 20px"
+        /></span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="zh">中文</el-dropdown-item>
+          <el-dropdown-item command="en">en</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -32,28 +48,39 @@
 </template>
 
 <script>
+import ThemePicker from '@/components/ThemePicker'
+import Cookies from 'js-cookie'
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import i18n from '@/lang'
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    ThemePicker
   },
   computed: {
     ...mapGetters([
       'sidebar',
+      'name',
       'avatar'
     ])
   },
   methods: {
-    toggleSideBar() {
+    toggleSideBar () {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
+    async logout () {
+      // 调用logout
       await this.$store.dispatch('user/logout')
+      // 跳转路由到login
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    handleCommand (command) {
+      i18n.locale = command
+      console.log(command)
+      Cookies.set('locale', command)
     }
   }
 }
@@ -65,18 +92,18 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -103,10 +130,10 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }
@@ -135,5 +162,26 @@ export default {
       }
     }
   }
+}
+.navbar {
+  background-color: #5283fd;
+}
+::v-deep .app-breadcrumb.el-breadcrumb .no-redirect {
+  color: #fff;
+}
+.user-avatar {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  vertical-align: middle;
+}
+.name {
+  color: #fff;
+  vertical-align: middle;
+  margin-left: 5px;
+}
+.user-dropdown {
+  color: #fff;
 }
 </style>
